@@ -84,30 +84,35 @@
   <ul>
     <li>userHeader<br>
       optional: Inherit (and trust!) the authenticated username from your frontend webserver in the given HTTP header.<br>
-      default: X-User
+      default: use allowedCommands (get/set) and allowedDevices from the allowed device valid for the corresponding web instance.
     </li> 
     <li>&lt;username&gt;_RDevices<br>
       optional: Comma-separated List of devices that the user &lt;username&gt; is allowed to read,
       i.e. perform GET on its readings. May contain regular expressions that match on several device names.<br>
-      example: <code>attr webapi sensor1_RDevices MainDoor,.*Light</code>
+      example: <code>attr webapi sensor1_RDevices MainDoor,.*Light</code><br>
+      (only used if userHeader is set)
     </li>
     <li>&lt;username&gt;_RWDevices<br>
       optional: Comma-separated List of devices that the user &lt;username&gt; is allowed to read and write,
       i.e. perform GET and POST on its readings. May contain regular expressions.<br>
-      example: <code>attr webapi sensor1_RWDevices Sensor1,OutsideLight</code>
+      example: <code>attr webapi sensor1_RWDevices Sensor1,OutsideLight</code><br>
+      (only used if userHeader is set)
     </li>
     <li>&lt;username&gt;_Response<br>
       optional:Answer to POST requests from this device. The default response is "OK".<br>
-      example: <code>attr webapi sensor1_Response !cfg.power_timeout=10000</code>
+      example: <code>attr webapi sensor1_Response !cfg.power_timeout=10000</code><br>
+      (only used if userHeader is set)
     </li>
     <li>defaultRDevices<br>
       optional: Comma-separated List of devices that all users are allowed to read.<br>
-      example: <code>attr webapi defaultRDevices OutsideTemperature</code>
+      example: <code>attr webapi defaultRDevices OutsideTemperature</code><br>
+      (only used if userHeader is set)
     </li>
     <li>defaultRWDevices<br>
       optional: Comma-separated List of devices that all users are allowed to read and write.<br>
       notice: if you just want a RESTful interface without user limitations, you might only set
-      defaultRDevices and defaultRWDevices.
+      defaultRDevices and defaultRWDevices.<br>
+      (only used if userHeader is set)
     </li>
   </ul>
   <br>
