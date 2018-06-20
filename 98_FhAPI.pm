@@ -198,7 +198,7 @@ sub FhAPI_CGI() {
 
             if ( $rdg ne "" ) {
                 Log3 $name, 3, "FhAPI $name: $user set $dev:$rdg=$body";
-                FhAPI_setval($name,$dev,"state",$body);
+                FhAPI_setval($name,$dev,$rdg,$body);
                 return ( "text/plain; charset=utf-8", $response );
 
             } else {
