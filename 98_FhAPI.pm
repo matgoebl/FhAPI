@@ -213,6 +213,9 @@ sub FhAPI_CGI() {
                 if( ref($json) eq "HASH" ) {
                     Log3 $name, 3, "FhAPI $name: $user set $dev=".encode_json($json);
                     while ( my ( $key, $value ) = each %{ $json } ) {
+                        if( ref($value) eq "HASH" || ref($value) eq "ARRAY" ) {
+                            $value = encode_json($value); # TODO: extract full structure
+                        }
                         FhAPI_setval($name,$dev,$key,$value);
                     }
                     return ( "text/plain; charset=utf-8", $response );
