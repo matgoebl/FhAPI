@@ -358,12 +358,12 @@ sub FhAPI_CGI() {
   <a name="FhAPIexamples"></a>
   <b>Installation, configuration and usage examples</b> 
   <ul>
-   <li>In order to install FhAPI just copy the perl module into your FHEM modules directory (distribution specific), e.g.:
+   <li>Installation:
+   <br>In order to install FhAPI just copy the perl module into your FHEM modules directory (distribution specific), e.g.:
     <pre>
       cp 98_FhAPI.pm /opt/fhem/FHEM/
     </pre>
    </li>
-  <ul>
    <li>FHEM configuration:
     <pre>
       define webapi FhAPI api
