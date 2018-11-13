@@ -133,15 +133,9 @@
       attr webapi defaultRDevices OutsideTemperature
       attr webapi sensor1_RDevices MainDoor,.*Light
       attr webapi sensor1_RWDevices Sensor1
-    </pre>
-
-    <pre>
       defmod WEBapi FHEMWEB 8084 global
       attr WEBapi csrfToken none
       attr WEBapi webname apifhem
-    </pre>
-
-    <pre>
       defmod allowed_WEBapi allowed
       attr allowed_WEBapi allowedCommands ,
       attr allowed_WEBapi allowedDevices ,
