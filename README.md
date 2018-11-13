@@ -118,15 +118,31 @@
   <br>
 
   <a name="FhAPIexamples"></a>
-  <b>Examples</b> 
+  <b>Installation, configuration and usage examples</b> 
   <ul>
-   <li>Device definition:
+   <li>In order to install FhAPI just copy the perl module into your FHEM modules directory (distribution specific), e.g.:
+    <pre>
+      cp 98_FhAPI.pm /opt/fhem/FHEM/
+    </pre>
+   </li>
+  <ul>
+   <li>FHEM configuration:
     <pre>
       define webapi FhAPI api
       attr webapi userHeader X-Remote-User
       attr webapi defaultRDevices OutsideTemperature
       attr webapi sensor1_RDevices MainDoor,.*Light
       attr webapi sensor1_RWDevices Sensor1
+
+      defmod WEBapi FHEMWEB 8084 global
+      attr WEBapi csrfToken none
+      attr WEBapi webname apifhem
+
+      defmod allowed_WEBapi allowed
+      attr allowed_WEBapi allowedCommands ,
+      attr allowed_WEBapi allowedDevices ,
+      attr allowed_WEBapi basicAuth dXNlcjpwYXNzd29yZA==
+      attr allowed_WEBapi validFor WEBapi
     </pre>
    </li>
    <li>Nginx frontend configuration:
@@ -135,7 +151,7 @@
           auth_basic_user_file /etc/nginx/conf/htpasswd_fhapi;
           # generate: echo -n 'user:password'|base64 
           proxy_set_header Authorization "Basic dXNlcjpwYXNzd29yZA==";
-          proxy_pass 'http://127.0.0.1:8083/fhem/api';
+          proxy_pass 'http://127.0.0.1:8084/apifhem/api';
           proxy_set_header X-Remote-User $remote_user;
       }
     </pre>
