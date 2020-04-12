@@ -95,7 +95,7 @@ sub FhAPI_setval($$$$) {
     my ($name,$dev,$rdg,$val) = @_;
     $dev=~s/[^-a-zA-Z0-9_.]//g;
     $rdg=~s/[^-a-zA-Z0-9_.]//g;
-    $val=~s&[^-a-zA-Z0-9_.,;:/#|() \$]&&g;
+    $val=~s&[^-a-zA-Z0-9_.,;:/#|() \$%]&&g;
     Log3 $name, 4, "FhAPI $name: set $rdg=$val";
     if ( $rdg eq "state" ) {
         fhem("set $dev $val");
