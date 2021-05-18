@@ -91,15 +91,19 @@ sub FhAPI_Undef($$) {
     return undef;
 }
 
-sub FhAPI_setval($$$$) {
-    my ($name,$dev,$rdg,$val) = @_;
+sub FhAPI_writeval($$$$$) {
+    my ($name,$dev,$rdg,$val,$cmd) = @_;
+    $cmd="set" if $cmd eq "";
     $dev=~s/[^-a-zA-Z0-9_.]//g;
     $rdg=~s/[^-a-zA-Z0-9_.]//g;
-    $val=~s&[^-a-zA-Z0-9_.,;:/#|() \$%]&&g;
-    Log3 $name, 4, "FhAPI $name: set $rdg=$val";
+    $val=~s&[^-a-zA-Z0-9_.,;:/#'"|() \$%]&&g;
+    Log3 $name, 4, "FhAPI $name: $dev $cmd $rdg=$val";
     if ( $rdg eq "state" ) {
-        fhem("set $dev $val");
+        fhem("$cmd $dev $val");
+    } elsif ( $cmd eq "trigger" ) {
+        fhem("trigger $dev $rdg $val");
     } else {
+        $val="." if $val eq "";
         fhem("setreading $dev $rdg $val");
     }
 }
@@ -132,6 +136,7 @@ sub FhAPI_CGI() {
         my $name = $data{FWEXT}{$link}{deviceName} if ( $data{FWEXT}{$link} );
         my $h = $defs{$name};
         $h->{SNAME} = $FW_wname;  # FhAPI uses the authorization of the underlying fhemweb instance
+        my $cmd = "set";
 
         my $userHeader = AttrVal($name, "userHeader", undef);
         my $user = defined($userHeader) ? $FW_httpheader{$userHeader} || "" : $FW_wname;
@@ -157,8 +162,15 @@ sub FhAPI_CGI() {
           unless ($dev ne "");
 
         if ( !defined($body) && defined($FW_webArgs{set}) ) {
-            Log3 $name, 4, "FhAPI $name: use set=$FW_webArgs{set} from url as body";
+            $cmd = "set";
             $body = $FW_webArgs{set};
+            Log3 $name, 4, "FhAPI $name: use set=$body from url as body";
+        }
+
+        if ( !defined($body) && defined($FW_webArgs{trigger}) ) {
+            $cmd = "trigger";
+            $body = $FW_webArgs{trigger};
+            Log3 $name, 4, "FhAPI $name: use trigger=$body from url as body";
         }
 
         if ( !defined($body) ) {
@@ -193,12 +205,12 @@ sub FhAPI_CGI() {
 
             return FhAPI_ReturnError($name, "text/plain; charset=utf-8",
                 "ERROR User $user is not autorized to write $dev" )
-              unless ( !defined($userHeader) && Authorized($h, "cmd", "set") == 1 && Authorized($h, "devicename", $dev) == 1 ) ||
+              unless ( !defined($userHeader) && Authorized($h, "cmd", $cmd) == 1 && Authorized($h, "devicename", $dev) == 1 ) ||
                      ( defined($userHeader) && ( FhAPI_isAuth($dev,$rwdevs) || FhAPI_isAuth($dev,$defaultrwdevs) ) );
 
             if ( $rdg ne "" ) {
-                Log3 $name, 3, "FhAPI $name: $user set $dev:$rdg=$body";
-                FhAPI_setval($name,$dev,$rdg,$body);
+                Log3 $name, 3, "FhAPI $name: $user $cmd $dev:$rdg=$body";
+                FhAPI_writeval($name,$dev,$rdg,$body,$cmd);
                 return ( "text/plain; charset=utf-8", $response );
 
             } else {
@@ -216,7 +228,7 @@ sub FhAPI_CGI() {
                         if( ref($value) eq "HASH" || ref($value) eq "ARRAY" ) {
                             $value = encode_json($value); # TODO: extract full structure
                         }
-                        FhAPI_setval($name,$dev,$key,$value);
+                        FhAPI_writeval($name,$dev,$key,$value,$cmd);
                     }
                     return ( "text/plain; charset=utf-8", $response );
                 }
@@ -294,6 +306,7 @@ sub FhAPI_CGI() {
        <li>GET <code>https://yourserver/fhapi/Light/</code> gives <code>{"state":"on"}</code></li>
        <li>POST <code>on</code> to <code>https://yourserver/fhapi/Light/state/</code></li>
        <li>GET <code>https://yourserver/fhapi/Light/state/?set=on</code> is allowed for clients that do not support POST</li>
+       <li>GET <code>https://yourserver/fhapi/Light/state/?trigger=timer</code> causes a "trigger Light timer"</li>
        <li>POST <code>{"state":"on","color":"blue"}</code> to <code>https://yourserver/fhapi/Light/</code></li>
        <li>GET <code>https://yourserver/fhapi/Light/</code> gives <code>{"state":"on","color":"blue"}</code></li>
        <li>GET <code>https://yourserver/fhapi/Light/color/</code> gives <code>blue</code></li>
@@ -322,7 +335,7 @@ sub FhAPI_CGI() {
   <ul>
     <li>userHeader<br>
       optional: Inherit (and trust!) the authenticated username from your frontend webserver in the given HTTP header.<br>
-      default: use allowedCommands (get/set) and allowedDevices from the allowed device valid for the corresponding web instance.
+      default: use allowedCommands (get/set/trigger) and allowedDevices from the allowed device valid for the corresponding web instance.
     </li> 
     <li>&lt;username&gt;_RDevices<br>
       optional: Comma-separated List of devices that the user &lt;username&gt; is allowed to read,
