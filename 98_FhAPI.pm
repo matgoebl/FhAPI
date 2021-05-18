@@ -222,14 +222,18 @@ sub FhAPI_CGI() {
                 } or do {
                     return FhAPI_ReturnError($name, "text/plain; charset=utf-8", "ERROR Invalid JSON data received" );
                 };
+                my $hash = $defs{$dev};
+                return FhAPI_ReturnError($name, "text/plain; charset=utf-8", "ERROR Unknown device $dev" ) if ! defined($hash);
                 if( ref($json) eq "HASH" ) {
-                    Log3 $name, 3, "FhAPI $name: $user set $dev=".encode_json($json);
+                    Log3 $name, 3, "FhAPI $name: $user $cmd $dev=".encode_json($json);
+                    readingsBeginUpdate($hash);
                     while ( my ( $key, $value ) = each %{ $json } ) {
                         if( ref($value) eq "HASH" || ref($value) eq "ARRAY" ) {
                             $value = encode_json($value); # TODO: extract full structure
                         }
-                        FhAPI_writeval($name,$dev,$key,$value,$cmd);
+                        readingsBulkUpdate($hash, $key, $value);
                     }
+                    readingsEndUpdate($hash, 1);
                     return ( "text/plain; charset=utf-8", $response );
                 }
             }
