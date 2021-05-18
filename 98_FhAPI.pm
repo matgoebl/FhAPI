@@ -46,7 +46,7 @@ sub FhAPI_addExtension($$$) {
     my ( $name, $func, $link ) = @_;
 
     my $url = "/$link";
-    Log3 $name, 2, "Registering FhAPI $name for URL $url...";
+    Log3 $name, 5, "Registering FhAPI $name for URL $url...";
     $data{FWEXT}{$url}{deviceName} = $name;
     $data{FWEXT}{$url}{FUNC}       = $func;
     $data{FWEXT}{$url}{LINK}       = $link;
@@ -57,7 +57,7 @@ sub FhAPI_removeExtension($) {
 
     my $url  = "/$link";
     my $name = $data{FWEXT}{$url}{deviceName};
-    Log3 $name, 2, "Unregistering FhAPI $name for URL $url...";
+    Log3 $name, 5, "Unregistering FhAPI $name for URL $url...";
     delete $data{FWEXT}{$url};
 }
 
@@ -149,7 +149,7 @@ sub FhAPI_CGI() {
 
         my ($first,$body) = split("&",$request,2);
 
-        Log3 $name, 3, "FhAPI $name called: user:$user r:$rdevs rw:$rwdevs resp:$response dev:$dev rdg:$rdg uri:$URI body:".($body?$body:"");
+        Log3 $name, 5, "FhAPI $name called: user:$user r:$rdevs rw:$rwdevs resp:$response dev:$dev rdg:$rdg uri:$URI body:".($body?$body:"");
 
         DoTrigger($name, "$user");
 
@@ -164,13 +164,13 @@ sub FhAPI_CGI() {
         if ( !defined($body) && defined($FW_webArgs{set}) ) {
             $cmd = "set";
             $body = $FW_webArgs{set};
-            Log3 $name, 4, "FhAPI $name: use set=$body from url as body";
+            Log3 $name, 5, "FhAPI $name: use set=$body from url as body";
         }
 
         if ( !defined($body) && defined($FW_webArgs{trigger}) ) {
             $cmd = "trigger";
             $body = $FW_webArgs{trigger};
-            Log3 $name, 4, "FhAPI $name: use trigger=$body from url as body";
+            Log3 $name, 5, "FhAPI $name: use trigger=$body from url as body";
         }
 
         if ( !defined($body) ) {
