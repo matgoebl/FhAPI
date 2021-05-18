@@ -302,14 +302,14 @@ sub FhAPI_CGI() {
     <p>
       <b>Example use:</b><br>
       <ul>
-       <li>GET <code>https://yourserver/fhapi/Light/state/</code> gives <code>on</code></li>
-       <li>GET <code>https://yourserver/fhapi/Light/</code> gives <code>{"state":"on"}</code></li>
-       <li>POST <code>on</code> to <code>https://yourserver/fhapi/Light/state/</code></li>
-       <li>GET <code>https://yourserver/fhapi/Light/state/?set=on</code> is allowed for clients that do not support POST</li>
-       <li>GET <code>https://yourserver/fhapi/Light/state/?trigger=timer</code> causes a "trigger Light timer"</li>
-       <li>POST <code>{"state":"on","color":"blue"}</code> to <code>https://yourserver/fhapi/Light/</code></li>
-       <li>GET <code>https://yourserver/fhapi/Light/</code> gives <code>{"state":"on","color":"blue"}</code></li>
-       <li>GET <code>https://yourserver/fhapi/Light/color/</code> gives <code>blue</code></li>
+       <li>Get the state: GET <code>https://yourserver/fhapi/Light/state/</code> gives <code>on</code></li>
+       <li>Get all readings: GET <code>https://yourserver/fhapi/Light/</code> gives <code>{"state":"on"}</code></li>
+       <li>Set a single reading: POST <code>on</code> to <code>https://yourserver/fhapi/Light/state/</code></li>
+       <li>Set a single reading (alternative method for clients that do not support POST): GET <code>https://yourserver/fhapi/Light/state/?set=on</code></li>
+       <li>Trigger an event: GET <code>https://yourserver/fhapi/Light/state/?trigger=timer</code> causes a "trigger Light timer"</li>
+       <li>Set multiple readings at once: POST <code>{"state":"on","color":"blue"}</code> to <code>https://yourserver/fhapi/Light/</code></li>
+       <li>Get all readings: GET <code>https://yourserver/fhapi/Light/</code> gives <code>{"state":"on","color":"blue"}</code></li>
+       <li>Get a single reading: GET <code>https://yourserver/fhapi/Light/color/</code> gives <code>blue</code></li>
       </ul>
     </p>
   </ul>
