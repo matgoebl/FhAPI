@@ -220,7 +220,7 @@ sub FhAPI_CGI() {
                     $json = decode_json($body);
                     1;
                 } or do {
-                    return FhAPI_ReturnError($name, "text/plain; charset=utf-8", "ERROR Invalid JSON data received" );
+                    return FhAPI_ReturnError($name, "text/plain; charset=utf-8", "ERROR Invalid JSON data received: $body" );
                 };
                 my $hash = $defs{$dev};
                 return FhAPI_ReturnError($name, "text/plain; charset=utf-8", "ERROR Unknown device $dev" ) if ! defined($hash);
